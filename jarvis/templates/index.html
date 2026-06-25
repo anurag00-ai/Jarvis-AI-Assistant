@@ -36,38 +36,32 @@ let command = event.results[event.results.length-1][0].transcript.toLowerCase();
 
 document.getElementById("text").innerHTML = "You said: " + command;
 
+fetch("/chat/", {
 
-if(command.includes("hello")){
+method: "POST",
 
-speak("Hello, I am Jarvis. How can I help you?");
+headers: {
+"Content-Type": "application/json"
+},
 
-}
+body: JSON.stringify({
 
+message: command
 
-else if(command.includes("time")){
+})
 
-let time = new Date().toLocaleTimeString();
+})
 
-speak("The time is " + time);
+.then(response => response.json())
 
-}
+.then(data => {
 
+speak(data.reply);
 
-else if(command.includes("youtube")){
+document.getElementById("text").innerHTML =
+"Jarvis: " + data.reply;
 
-speak("Opening YouTube");
-setTimeout(function(){
-window.location.href = "https://youtube.com";
-
-}, 1500);
-}
-
-
-else{
-
-speak("Sorry, I don't understand that yet");
-
-}
+});
 
 }
 
