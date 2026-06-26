@@ -1,91 +1,224 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>Jarvis AI</title>
+
+<style>
+
+body{
+
+background:#111;
+color:white;
+font-family:Arial;
+text-align:center;
+
+}
+
+
+h1{
+
+font-size:40px;
+
+}
+
+
+#chat{
+
+width:70%;
+height:400px;
+margin:auto;
+overflow-y:auto;
+border:1px solid white;
+padding:20px;
+border-radius:15px;
+
+}
+
+
+.user{
+
+text-align:right;
+margin:15px;
+color:#00ffff;
+
+}
+
+
+.jarvis{
+
+text-align:left;
+margin:15px;
+color:#00ff66;
+
+}
+
+
+button{
+
+padding:15px 30px;
+font-size:20px;
+border-radius:20px;
+cursor:pointer;
+
+}
+
+
+</style>
+
+
 </head>
+
 
 <body>
 
-<h1>🤖 JARVIS</h1>
 
-<p id="text">Click and speak</p>
+<h1>🤖 JARVIS AI</h1>
 
-<button onclick="startListening()">🎙️ Start Listening</button>
+
+<div id="chat">
+
+<p class="jarvis">
+Jarvis: Hello, I am ready.
+</p>
+
+
+</div>
+
+
+<br>
+
+
+<button onclick="startListening()">
+🎙️ Speak
+</button>
+
+
 
 <script>
 
+
 let recognition = new webkitSpeechRecognition();
+
 
 recognition.continuous = true;
 recognition.interimResults = false;
 recognition.lang = "en-US";
 
 
-function startListening(){
 
-document.getElementById("text").innerHTML = "Listening...";
+function startListening(){
 
 recognition.start();
 
+
 }
+
 
 
 recognition.onresult = function(event){
 
-let command = event.results[event.results.length-1][0].transcript.toLowerCase();
 
-document.getElementById("text").innerHTML = "You said: " + command;
+let command =
+event.results[event.results.length-1][0].transcript;
 
-fetch("/chat/", {
 
-method: "POST",
+addMessage("You: "+command,"user");
 
-headers: {
-"Content-Type": "application/json"
+
+
+fetch("/chat/",{
+
+
+method:"POST",
+
+
+headers:{
+
+"Content-Type":"application/json"
+
 },
 
-body: JSON.stringify({
 
-message: command
+body:JSON.stringify({
+
+message:command
 
 })
 
+
 })
 
-.then(response => response.json())
 
-.then(data => {
+.then(response=>response.json())
+
+
+.then(data=>{
+
+
+addMessage("Jarvis: "+data.reply,"jarvis");
+
 
 speak(data.reply);
 
-document.getElementById("text").innerHTML =
-"Jarvis: " + data.reply;
+
 
 });
 
+
 }
+
+
+
+
+
+function addMessage(message,type){
+
+
+let chat=document.getElementById("chat");
+
+
+let p=document.createElement("p");
+
+
+p.className=type;
+
+
+p.innerHTML=message;
+
+
+chat.appendChild(p);
+
+
+chat.scrollTop=chat.scrollHeight;
+
+
+}
+
+
 
 
 
 function speak(message){
 
-let speech = new SpeechSynthesisUtterance();
 
-speech.text = message;
+let speech=new SpeechSynthesisUtterance();
+
+
+speech.text=message;
+
 
 window.speechSynthesis.speak(speech);
 
-}
-
-
-
-recognition.onend = function(){
-
-recognition.start();
 
 }
+
 
 
 </script>
+
+
 </body>
+
 </html>
