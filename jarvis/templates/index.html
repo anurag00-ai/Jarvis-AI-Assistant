@@ -67,7 +67,6 @@ cursor:pointer;
 
 </style>
 
-
 </head>
 
 
@@ -79,8 +78,9 @@ cursor:pointer;
 
 <div id="chat">
 
+
 <p class="jarvis">
-Jarvis: Hello, I am ready.
+Jarvis: Systems online. Welcome back Anurag.
 </p>
 
 
@@ -91,7 +91,9 @@ Jarvis: Hello, I am ready.
 
 
 <button onclick="startListening()">
+
 🎙️ Speak
+
 </button>
 
 
@@ -102,8 +104,10 @@ Jarvis: Hello, I am ready.
 let recognition = new webkitSpeechRecognition();
 
 
-recognition.continuous = true;
+recognition.continuous = false;
+
 recognition.interimResults = false;
+
 recognition.lang = "en-US";
 
 
@@ -111,7 +115,6 @@ recognition.lang = "en-US";
 function startListening(){
 
 recognition.start();
-
 
 }
 
@@ -124,9 +127,123 @@ let command =
 event.results[event.results.length-1][0].transcript;
 
 
-addMessage("You: "+command,"user");
+
+addMessage("You: " + command,"user");
 
 
+
+let text = command.toLowerCase();
+
+
+
+if(text.includes("youtube")){
+
+
+speak("Opening YouTube, Anurag");
+
+
+window.open(
+"https://youtube.com",
+"_blank"
+);
+
+
+return;
+
+
+}
+
+
+
+else if(text.includes("google")){
+
+
+speak("Opening Google, Anurag");
+
+
+window.open(
+"https://google.com",
+"_blank"
+);
+
+
+return;
+
+
+}
+
+
+
+else if(text.includes("time")){
+
+
+let time =
+new Date().toLocaleTimeString();
+
+
+speak(
+"The current time is " + time
+);
+
+
+return;
+
+
+}
+
+
+
+else if(text.includes("date")){
+
+
+let date =
+new Date().toDateString();
+
+
+speak(
+"Today's date is " + date
+);
+
+
+return;
+
+
+}
+
+
+
+else if(text.includes("search")){
+
+
+let query =
+text.replace("search","").trim();
+
+
+
+speak(
+"Searching " + query
+);
+
+
+
+window.open(
+
+"https://www.google.com/search?q="
++ encodeURIComponent(query),
+
+"_blank"
+
+);
+
+
+
+return;
+
+
+}
+
+
+addMessage("Jarvis: Thinking...","jarvis");
 
 fetch("/chat/",{
 
@@ -136,45 +253,48 @@ method:"POST",
 
 headers:{
 
+
 "Content-Type":"application/json"
+
 
 },
 
 
 body:JSON.stringify({
 
+
 message:command
 
+
 })
 
 
 })
+
 
 
 .then(response=>response.json())
+
+
 .then(data=>{
 
 
-addMessage("Jarvis: "+data.reply,"jarvis");
+addMessage(
+"Jarvis: " + data.reply,
+"jarvis"
+);
+
 
 
 speak(data.reply);
 
 
-if(command.toLowerCase().includes("youtube")){
-
-speak("Opening YouTube, Anurag");
-
-window.open("https://youtube.com", "_blank");
-
-}
-
 
 });
 
 
-}
 
+}
 
 
 
@@ -182,26 +302,28 @@ window.open("https://youtube.com", "_blank");
 function addMessage(message,type){
 
 
-let chat=document.getElementById("chat");
+let chat =
+document.getElementById("chat");
 
 
-let p=document.createElement("p");
+let p =
+document.createElement("p");
 
 
-p.className=type;
+p.className = type;
 
 
-p.innerHTML=message;
+p.innerHTML = message;
 
 
 chat.appendChild(p);
 
 
-chat.scrollTop=chat.scrollHeight;
+chat.scrollTop =
+chat.scrollHeight;
 
 
 }
-
 
 
 
@@ -209,19 +331,28 @@ chat.scrollTop=chat.scrollHeight;
 function speak(message){
 
 
-let speech=new SpeechSynthesisUtterance();
+let speech =
+new SpeechSynthesisUtterance();
 
 
-speech.text=message;
+speech.text = message;
 
 
 window.speechSynthesis.speak(speech);
 
 
 }
-window.onload = function(){
 
-speak("Welcome back Anurag. Systems are online. How can I assist you?");
+
+
+
+window.onload=function(){
+
+
+speak(
+"Welcome back Anurag. Systems are online. How can I assist you?"
+);
+
 
 }
 
@@ -231,5 +362,6 @@ speak("Welcome back Anurag. Systems are online. How can I assist you?");
 
 
 </body>
+
 
 </html>
