@@ -152,8 +152,6 @@ message:command
 
 
 .then(response=>response.json())
-
-
 .then(data=>{
 
 
@@ -162,6 +160,14 @@ addMessage("Jarvis: "+data.reply,"jarvis");
 
 speak(data.reply);
 
+
+if(command.toLowerCase().includes("youtube")){
+
+speak("Opening YouTube, Anurag");
+
+window.open("https://youtube.com", "_blank");
+
+}
 
 
 });
@@ -211,6 +217,11 @@ speech.text=message;
 
 window.speechSynthesis.speak(speech);
 
+
+}
+window.onload = function(){
+
+speak("Welcome back Anurag. Systems are online. How can I assist you?");
 
 }
 
